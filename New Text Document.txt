@@ -1,0 +1,49 @@
+public class FibCalculator
+{
+    private static Dictionary<long, ulong> calculatedFibs = new Dictionary<long, ulong>();
+
+    private static long maxN;
+
+    public static ulong Calc(long n)
+    {
+        if (n == 0)
+            return 0;
+        else if (calculatedFibs.ContainsKey(n))
+            return calculatedFibs[n];
+
+        ulong lastlast = 0,
+            last = 0,
+            curr = 0;
+
+        long lastMaxN = maxN;
+        bool flag = false;
+
+        if (n > maxN)
+        {
+            calculatedFibs.TryGetValue(maxN - 1, out lastlast);
+
+            if (!calculatedFibs.TryGetValue(maxN, out last))
+                last = 1;
+
+            maxN = n;
+            n -= lastMaxN;
+
+            if (calculatedFibs.Count == 0)
+            {
+                n--;
+                flag = true;
+            }
+        }
+
+        for (int i = 1; i <= n; i++)
+        {
+            curr = last + lastlast;
+            lastlast = last;
+            last = curr;
+
+            calculatedFibs.Add(i + lastMaxN + (flag ? 1 : 0), curr);
+        }
+
+        return curr;
+    }
+}
